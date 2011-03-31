@@ -66,6 +66,42 @@ void ColorInformationDock::setsRGB_Res(int R, int G, int B) {
     ui->sRGB_B_3->setText(QString::number(B));
 }
 
+void ColorInformationDock::setCIELab(double L, double a, double b) {
+    ui->CIELab_L->setText(QString::number(L));
+    ui->CIELab_a->setText(QString::number(a));
+    ui->CIELab_b->setText(QString::number(b));
+}
+
+void ColorInformationDock::setCIELab_2(double L, double a, double b) {
+    ui->CIELab_L_2->setText(QString::number(L));
+    ui->CIELab_a_2->setText(QString::number(a));
+    ui->CIELab_b_2->setText(QString::number(b));
+}
+
+void ColorInformationDock::setCIELab_Res(double L, double a, double b) {
+    ui->CIELab_L_3->setText(QString::number(L));
+    ui->CIELab_a_3->setText(QString::number(a));
+    ui->CIELab_b_3->setText(QString::number(b));
+}
+
+void ColorInformationDock::setCIELuv(double L, double u, double v) {
+    ui->CIELuv_L->setText(QString::number(L));
+    ui->CIELuv_u->setText(QString::number(u));
+    ui->CIELuv_v->setText(QString::number(v));
+}
+
+void ColorInformationDock::setCIELuv_2(double L, double u, double v) {
+    ui->CIELuv_L_2->setText(QString::number(L));
+    ui->CIELuv_u_2->setText(QString::number(u));
+    ui->CIELuv_v_2->setText(QString::number(v));
+}
+
+void ColorInformationDock::setCIELuv_Res(double L, double u, double v) {
+    ui->CIELuv_L_3->setText(QString::number(L));
+    ui->CIELuv_u_3->setText(QString::number(u));
+    ui->CIELuv_v_3->setText(QString::number(v));
+}
+
 void ColorInformationDock::setSampleColor(int R, int G, int B) {
     QString bgColorStyle("background-color:rgb(");
     bgColorStyle +=  QString::number(R);

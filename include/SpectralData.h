@@ -42,8 +42,8 @@ public:
     void convertToCIExyY( int colorIndex, double &x, double &y, double &Y);
     void convertTosRGB( int colorIndex, int &R, int &G, int &B);
     void convertToRGB( int colorIndex, int &R, int &G, int &B);
-    void convertToLab( int colorIndex, int &L, int &a, int &b);
-    void convertToLuv( int colorIndex, int &L, int &u, int &v);
+    void convertToCIELab( int colorIndex, double &L, double &a, double &b);
+    void convertToCIELuv( int colorIndex, double &L, double &u, double &v);
 };
 
 #endif // SPECTRALDATA_H

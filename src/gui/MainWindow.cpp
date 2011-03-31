@@ -113,6 +113,14 @@ void PlotWindow::changeColor1(int color) {
     spectralIn->convertTosRGB(color, R, G, B);
     colorInfoDock->setsRGB(R, G, B);
 
+    double L, a, b;
+    spectralIn->convertToCIELab(color, L, a, b);
+    colorInfoDock->setCIELab(L, a, b);
+
+    double u, v;
+    spectralIn->convertToCIELuv(color, L, u, v);
+    colorInfoDock->setCIELuv(L, u, v);
+
     spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor(R, G, B);
 
@@ -134,6 +142,14 @@ void PlotWindow::changeColor2(int color) {
     int R, G, B;
     spectralIn->convertTosRGB(color, R, G, B);
     colorInfoDock->setsRGB_2(R, G, B);
+
+    double L, a, b;
+    spectralIn->convertToCIELab(color, L, a, b);
+    colorInfoDock->setCIELab_2(L, a, b);
+
+    double u, v;
+    spectralIn->convertToCIELuv(color, L, u, v);
+    colorInfoDock->setCIELuv_2(L, u, v);
 
     spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor_2(R, G, B);
@@ -170,10 +186,18 @@ void PlotWindow::updateResultColor(){
     resultSpectrum.convertTosRGB(0, R, G, B);
     colorInfoDock->setsRGB_Res(R, G, B);
 
+    double L, a, b;
+    resultSpectrum.convertToCIELab(0, L, a, b);
+    colorInfoDock->setCIELab_Res(L, a, b);
+
+    double u, v;
+    resultSpectrum.convertToCIELuv(0, L, u, v);
+    colorInfoDock->setCIELuv_Res(L, u, v);
+
     resultSpectrum.convertToRGB(0, R, G, B);
     colorInfoDock->setSampleColor_Res(R, G, B);
 
-    //    updatePlot();
+    updatePlot();
 
 }
 

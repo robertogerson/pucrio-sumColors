@@ -70,20 +70,20 @@ void SpectralData::readIlluminants(const char *filePath) {
 
         istringstream is(line);
         switch (state) {
-            case 0: is >> name >> length;
-                illuminants.insert(name, new QMap <int, double> );
-                state = 1;
-                break;
-            case 1:
-                is >> wavelength >> data;
-                illuminants[name]->insert(wavelength, data);
-                length--;
-                if(!length) {
-                    // finish reading the current illuminant, must way for
-                    // another
-                    state = 0;
-                }
-                break;
+        case 0: is >> name >> length;
+            illuminants.insert(name, new QMap <int, double> );
+            state = 1;
+            break;
+        case 1:
+            is >> wavelength >> data;
+            illuminants[name]->insert(wavelength, data);
+            length--;
+            if(!length) {
+                // finish reading the current illuminant, must way for
+                // another
+                state = 0;
+            }
+            break;
 
         }
 
@@ -104,11 +104,10 @@ void SpectralData::readFromFile(const char *filePath) {
     int ncolors;
 
     qDebug() << "Reading input spectral file: '" << filePath << "'";
+
     //colorRange
     inFile >> cmd;
     inFile >> this->startWaveLength >> this->endWaveLength;
-//            qDebug() << this->startWaveLength << " " << this->endWaveLength
-//                            << endl;
 
     //step
     inFile >> cmd;
@@ -194,11 +193,11 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
         double zbar = this->stdObserverZbar->value(wavelength);
 
         sum_x += this->I[colorIndex][i] * xbar * (this->step) *
-                    this->illuminants[current_illuminant]->value(wavelength);
+                 this->illuminants[current_illuminant]->value(wavelength);
         sum_y += this->I[colorIndex][i] * ybar * (this->step) *
-                    this->illuminants[current_illuminant]->value(wavelength);
+                 this->illuminants[current_illuminant]->value(wavelength);
         sum_z += this->I[colorIndex][i] * zbar * (this->step) *
-                    this->illuminants[current_illuminant]->value(wavelength);
+                 this->illuminants[current_illuminant]->value(wavelength);
     }
 
     sum_x /= N;
@@ -209,7 +208,7 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
     x = sum_x/(sum_x+sum_y+sum_z);
     y = sum_y/(sum_x+sum_y+sum_z);
 
-//    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
+    //    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
     Y = sum_y;
     X = (x/y)*(Y);
     Z = ((1-x-y)/y)*(Y);
@@ -240,6 +239,7 @@ void SpectralData::convertTosRGB( int colorIndex,
     B = (b/100)*255;
 
     // X /= 100; Y /= 100; Z /= 100;
+    // Tristimulus Reference to D65
     double Xw = 95.047;
     double Yw = 100;
     double Zw = 108.883;
@@ -304,13 +304,57 @@ void SpectralData::convertToRGB( int colorIndex,
     else if (B < 0) B = 0;
 }
 
-void SpectralData::convertToLab( int colorIndex,
-                                 int &L, int &a, int &b) {
+void SpectralData::convertToCIELab( int colorIndex,
+                                 double &L, double &a, double &b) {
+    double X, Y, Z;
+    convertToCIEXYZ(colorIndex, X, Y, Z);
 
-    //TODO: All
+    // Tristimulus Reference to D65
+    double Xw = 95.047;
+    double Yw = 100;
+    double Zw = 108.883;
+
+    double xn = X/Xw;
+    double yn = Y/Yw;
+    double zn = Z/Zw;
+
+    double fx = (xn>0.008856451586)?pow(xn,1./3):7.787036979*xn+16.0/116;
+    double fy = (yn>0.008856451586)?pow(yn,1./3):7.787036979*yn+16.0/116;
+    double fz = (zn>0.008856451586)?pow(zn,1./3):7.787036979*zn+16.0/116;
+
+    L = (yn>0.008856451586 )?116*pow(yn,1./3)-16: 903.2963058*yn;
+    a = 500.*( fx - fy );
+    b = 200.*( fy - fz );
 }
 
-void SpectralData::convertToLuv(int colorIndex,
-                                int &L, int &u, int &v) {
-    //TODO: All
+void SpectralData::convertToCIELuv(int colorIndex,
+                                double &L, double &u, double &v) {
+
+    double X, Y, Z;
+    convertToCIEXYZ(colorIndex, X, Y, Z);
+
+    // Tristimulus Reference to D65
+    double Xw = 95.047;
+    double Yw = 100;
+    double Zw = 108.883;
+
+    double ref_X = Xw;
+    double ref_Y = Yw;
+    double ref_Z = Zw;
+
+    double ref_U = ( 4 * ref_X ) / ( ref_X + ( 15 * ref_Y ) + ( 3 * ref_Z ) );
+    double ref_V = ( 9 * ref_Y ) / ( ref_X + ( 15 * ref_Y ) + ( 3 * ref_Z ) );
+
+    double var_U = ( 4 * X ) / ( X + ( 15 * Y ) + ( 3 * Z ) );
+    double var_V = ( 9 * Y ) / ( X + ( 15 * Y ) + ( 3 * Z ) );
+    double var_Y = Y / 100;
+
+
+    if ( var_Y > 0.008856 ) var_Y = pow(var_Y,( 1./3 ));
+    else                    var_Y = (( 7.787 * var_Y ) + ( 16./ 116 ));
+
+
+    L = ( 116 * var_Y ) - 16;
+    u = 13 * L * ( var_U - ref_U );
+    v = 13 * L * ( var_V - ref_V );
 }
