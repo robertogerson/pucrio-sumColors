@@ -26,7 +26,7 @@ private:
     bool stdObserverSpectrumActived, normalizeResultSpectrum;
     int colorIndex1, colorIndex2;
 
-    SpectralData spectralIn;
+    SpectralData *spectralIn;
     SpectralData resultSpectrum;
 
     ColorChooseDock *colorChooseDock;
@@ -62,7 +62,7 @@ public:
 
     /// Set the input SpectralData object
     /// \param spectralIn SpectralData object
-    void setSpectralData(SpectralData spectralIn);
+    void setSpectralData(SpectralData *spectralIn);
 
 public slots:
     void interactive();

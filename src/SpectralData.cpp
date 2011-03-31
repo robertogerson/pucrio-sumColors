@@ -5,25 +5,24 @@ SpectralData::SpectralData() {
     stdObserverYbar = new QMap<int, double>();
     stdObserverZbar = new QMap<int, double>();
 
-    illuminant = new QMap<int, double>();
-    illuminant2 = new QMap<int, double>();
     this->I = NULL;
 
     readStandardObserverFromFile("data/cie_standard_observer_2deg.in");
-    readIlluminant("data/illuminant_d50.in");
-//    readIlluminant2("data/illuminant_d50.in");
+    readIlluminants("data/illuminants.in");
+
+    current_illuminant = "D50";
 
 }
 
-//TODO: This is a great opportunity to bugs!
-//SpectralData::~SpectralData() {
-
-//}
+// TODO: This is a great opportunity to bugs!
+SpectralData::~SpectralData() {
+    clearAllSpectralData();
+}
 
 void SpectralData::readStandardObserverFromFile(const char *filePath) {
     ifstream inFile;
-
     qDebug() << "Reading StandardObserver file: " << filePath;
+
     inFile.open(filePath);
     if (!inFile) {
         qDebug() << "Unable to open file " << filePath;
@@ -47,7 +46,7 @@ void SpectralData::readStandardObserverFromFile(const char *filePath) {
 
 }
 
-void SpectralData::readIlluminant(const char *filePath) {
+void SpectralData::readIlluminants(const char *filePath) {
     ifstream inFile;
 
     qDebug() << "Reading readIlluminant file: " << filePath;
@@ -55,43 +54,40 @@ void SpectralData::readIlluminant(const char *filePath) {
 
     if (!inFile) {
         qDebug() << "Unable to open file " << filePath;
-        exit(1); //call system to stop
+        exit(1); // call system to stop
     }
 
-    illuminant->clear();
+    illuminants.clear();
 
-    int wavelength;
+    string line, name;
+    int wavelength, length;
     double data;
-    while (inFile >> wavelength ) {
-        inFile >> data;
-        illuminant->insert(wavelength, data);
+    int state = 0;
+
+    while(getline(inFile, line)) {
+        //TODO: Just comments in the begin of the line are supported
+        if(line[0] == '#') continue; // ignore lines starting with #
+
+        istringstream is(line);
+        switch (state) {
+            case 0: is >> name >> length;
+                illuminants.insert(name, new QMap <int, double> );
+                state = 1;
+                break;
+            case 1:
+                is >> wavelength >> data;
+                illuminants[name]->insert(wavelength, data);
+                length--;
+                if(!length) {
+                    // finish reading the current illuminant, must way for
+                    // another
+                    state = 0;
+                }
+                break;
+
+        }
+
     }
-
-    inFile.close();
-}
-
-void SpectralData::readIlluminant2(const char *filePath) {
-    ifstream inFile;
-
-    qDebug() << "Reading readIlluminant file: " << filePath;
-    inFile.open(filePath);
-
-    if (!inFile) {
-        qDebug() << "Unable to open file " << filePath;
-        exit(1); //call system to stop
-    }
-
-    illuminant2->clear();
-
-    int wavelength;
-    double data;
-    while (inFile >> wavelength ) {
-        inFile >> data;
-        qDebug() << wavelength << data;
-        illuminant2->insert(wavelength, data);
-        qDebug() << illuminant2->value(wavelength);
-    }
-
     inFile.close();
 }
 
@@ -111,8 +107,8 @@ void SpectralData::readFromFile(const char *filePath) {
     //colorRange
     inFile >> cmd;
     inFile >> this->startWaveLength >> this->endWaveLength;
-    //        qDebug() << this->startWaveLength << " " << this->endWaveLength
-    //                        << endl;
+//            qDebug() << this->startWaveLength << " " << this->endWaveLength
+//                            << endl;
 
     //step
     inFile >> cmd;
@@ -133,7 +129,8 @@ void SpectralData::readFromFile(const char *filePath) {
     for (int i = 0; i < ncolors; i++) {
         string colorname;
         inFile >> colorname;
-        this->color_name.push_back(colorname);
+        QString qcolorname(colorname.c_str());
+        this->color_name.push_back(qcolorname);
 
         for (int j = 0; j < ncols; j++)
             inFile >> this->I[i][j];
@@ -142,7 +139,9 @@ void SpectralData::readFromFile(const char *filePath) {
     inFile.close();
 }
 
-void SpectralData::freeSpectralData() {
+
+void SpectralData::clearColorData() {
+    //free spectrum data
     if(this->I != NULL) {
         for (uint i = 0; i < this->color_name.size(); i++) {
             if(this->I != NULL){
@@ -153,6 +152,18 @@ void SpectralData::freeSpectralData() {
             this->I = NULL;
         }
     }
+}
+
+void SpectralData::clearAllSpectralData() {
+    qDebug() << "freeSpectralData ()";
+    clearColorData();
+    string key;
+    foreach(key, illuminants.keys()) {
+        illuminants[key]->clear();
+        delete illuminants[key];
+    }
+    illuminants.clear();
+    color_name.clear();
 }
 
 void SpectralData::convertToCIEXYZ( int colorIndex,
@@ -168,7 +179,9 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
         wavelength = this->startWaveLength + i * (this->step);
         double ybar = this->stdObserverYbar->value(wavelength);
 
-        N += (ybar) * this->illuminant->value(wavelength)/100 * (this->step);
+        N += (ybar) *
+             this->illuminants[current_illuminant]->value(wavelength)/100 *
+             (this->step);
     }
 
     double sum_x = 0.0, sum_y = 0.0, sum_z =0.0;
@@ -180,9 +193,12 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
         double ybar = this->stdObserverYbar->value(wavelength);
         double zbar = this->stdObserverZbar->value(wavelength);
 
-        sum_x += this->I[colorIndex][i] * xbar * (this->step) * this->illuminant->value(wavelength);
-        sum_y += this->I[colorIndex][i] * ybar * (this->step) * this->illuminant->value(wavelength);
-        sum_z += this->I[colorIndex][i] * zbar * (this->step) * this->illuminant->value(wavelength);
+        sum_x += this->I[colorIndex][i] * xbar * (this->step) *
+                    this->illuminants[current_illuminant]->value(wavelength);
+        sum_y += this->I[colorIndex][i] * ybar * (this->step) *
+                    this->illuminants[current_illuminant]->value(wavelength);
+        sum_z += this->I[colorIndex][i] * zbar * (this->step) *
+                    this->illuminants[current_illuminant]->value(wavelength);
     }
 
     sum_x /= N;
@@ -193,7 +209,8 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
     x = sum_x/(sum_x+sum_y+sum_z);
     y = sum_y/(sum_x+sum_y+sum_z);
 
-    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
+//    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
+    Y = sum_y;
     X = (x/y)*(Y);
     Z = ((1-x-y)/y)*(Y);
 }
@@ -285,4 +302,15 @@ void SpectralData::convertToRGB( int colorIndex,
     B = b*255;
     if(B > 255) B = 255;
     else if (B < 0) B = 0;
+}
+
+void SpectralData::convertToLab( int colorIndex,
+                                 int &L, int &a, int &b) {
+
+    //TODO: All
+}
+
+void SpectralData::convertToLuv(int colorIndex,
+                                int &L, int &u, int &v) {
+    //TODO: All
 }

@@ -16,13 +16,13 @@ void ColorChooseDock::clearColours() {
     ui->listWidgetColor2->clear();
 }
 
-void ColorChooseDock::addColor( int index, QString color_name
-                                /*int R, int G, int B*/) {
+void ColorChooseDock::addColor( int index, QString &color_name
+                                /*, int R, int G, int B*/) {
     ui->listWidgetColor1->insertItem(index, color_name);
     ui->listWidgetColor2->insertItem(index, color_name);
 
-    QFrame *frame = new QFrame(layout()->widget());
-    frame->setStyleSheet("background-color: red");
+//    QFrame *frame = new QFrame(layout()->widget());
+//    frame->setStyleSheet("background-color: red");
 }
 
 QListWidget *ColorChooseDock::getListWidgetColor1(){

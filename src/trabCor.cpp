@@ -27,20 +27,19 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-        SpectralData spectralIn;
-        spectralIn.readFromFile(argv[1]);
+        SpectralData *spectralIn = new SpectralData();
+        spectralIn->readFromFile(argv[1]);
         argc = 1;
 
         int res;
-
         QApplication a( argc, argv );
         PlotWindow   *win = new PlotWindow(argc, argv);
+
         win->setSpectralData(spectralIn);
         a.setActiveWindow( win );
         win->setVisible( true );
         res = a.exec();
 
-        spectralIn.freeSpectralData();
-
+        delete spectralIn;
 	return 0;
 }

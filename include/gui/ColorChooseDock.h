@@ -4,6 +4,7 @@
 #include <QDockWidget>
 #include <QStringListModel>
 #include <QListWidget>
+#include <QDebug>
 
 namespace Ui {
     class ColorChooseDock;
@@ -18,7 +19,7 @@ public:
     ~ColorChooseDock();
 
     void clearColours();
-    void addColor(int index, QString color_name);
+    void addColor(int index, QString &color_name);
     QListWidget *getListWidgetColor1();
     QListWidget *getListWidgetColor2();
 

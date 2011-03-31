@@ -102,18 +102,18 @@ void PlotWindow::changeColor1(int color) {
     colorIndex1 = color;
     updatePlot();
     double X, Y, Z;
-    spectralIn.convertToCIEXYZ(color, X, Y, Z);
+    spectralIn->convertToCIEXYZ(color, X, Y, Z);
     colorInfoDock->setCIEXYZ(X, Y, Z);
 
     double x, y;
-    spectralIn.convertToCIExyY(color, x, y, Y);
+    spectralIn->convertToCIExyY(color, x, y, Y);
     colorInfoDock->setCIExyY(x, y, Y);
 
     int R, G, B;
-    spectralIn.convertTosRGB(color, R, G, B);
+    spectralIn->convertTosRGB(color, R, G, B);
     colorInfoDock->setsRGB(R, G, B);
 
-    spectralIn.convertToRGB(color, R, G, B);
+    spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor(R, G, B);
 
     updateResultColor();
@@ -124,18 +124,18 @@ void PlotWindow::changeColor2(int color) {
     updatePlot();
 
     double X, Y, Z;
-    spectralIn.convertToCIEXYZ(color, X, Y, Z);
+    spectralIn->convertToCIEXYZ(color, X, Y, Z);
     colorInfoDock->setCIEXYZ_2(X, Y, Z);
 
     double x, y;
-    spectralIn.convertToCIExyY(color, x, y, Y);
+    spectralIn->convertToCIExyY(color, x, y, Y);
     colorInfoDock->setCIExyY_2(x, y, Y);
 
     int R, G, B;
-    spectralIn.convertTosRGB(color, R, G, B);
+    spectralIn->convertTosRGB(color, R, G, B);
     colorInfoDock->setsRGB_2(R, G, B);
 
-    spectralIn.convertToRGB(color, R, G, B);
+    spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor_2(R, G, B);
 
     updateResultColor();
@@ -143,12 +143,12 @@ void PlotWindow::changeColor2(int color) {
 }
 
 void PlotWindow::updateResultColor(){
-    int ncols = (spectralIn.endWaveLength - spectralIn.startWaveLength)
-                / spectralIn.step + 1;
+    int ncols = (spectralIn->endWaveLength - spectralIn->startWaveLength)
+                / spectralIn->step + 1;
 
     for (uint i = 0; i < ncols; i++) {
-        resultSpectrum.I[0][i] = spectralIn.I[colorIndex1][i] +
-                                 spectralIn.I[colorIndex2][i];
+        resultSpectrum.I[0][i] = spectralIn->I[colorIndex1][i] +
+                                 spectralIn->I[colorIndex2][i];
     }
 
     // If the user selected to normalize the spectrum, divide the sum above by 2
@@ -173,7 +173,7 @@ void PlotWindow::updateResultColor(){
     resultSpectrum.convertToRGB(0, R, G, B);
     colorInfoDock->setSampleColor_Res(R, G, B);
 
-    updatePlot();
+    //    updatePlot();
 
 }
 
@@ -201,17 +201,17 @@ void PlotWindow::updatePlot() {
 
 void PlotWindow::plotStdObserverFunction() {
     PLFLT xmin, xmax, ymin, ymax;
-    int ncols = spectralIn.stdObserverXbar->keys().size();
+    int ncols = spectralIn->stdObserverXbar->keys().size();
     double x[ncols];
     double xbar[ncols], ybar[ncols], zbar[ncols];
 
     int key;
     int i = 0;
-    foreach ( key, spectralIn.stdObserverXbar->keys() ) {
+    foreach ( key, spectralIn->stdObserverXbar->keys() ) {
         x[i] = key;
-        xbar[i] = spectralIn.stdObserverXbar->value(key);
-        ybar[i] = spectralIn.stdObserverYbar->value(key);
-        zbar[i] = spectralIn.stdObserverZbar->value(key);
+        xbar[i] = spectralIn->stdObserverXbar->value(key);
+        ybar[i] = spectralIn->stdObserverYbar->value(key);
+        zbar[i] = spectralIn->stdObserverZbar->value(key);
         i++;
     }
 
@@ -247,18 +247,17 @@ void PlotWindow::plotSpectralData(int color1, int color2) {
     int i;
     PLFLT xmin, xmax, ymin, ymax;
 
-    int ncols = (spectralIn.endWaveLength - spectralIn.startWaveLength)
-                / spectralIn.step + 1;
+    int ncols = (spectralIn->endWaveLength - spectralIn->startWaveLength)
+                / spectralIn->step + 1;
     double x1[ncols], x2[ncols];
     double y1[ncols], y2[ncols];
     double xRes[ncols], yRes[ncols];
 
     //Get color for index color1
     if(color1 >= 0) {
-        //  cout << "ncols = " << ncols << endl;
         for (i = 0; i < ncols; i++) {
-            x1[i] = spectralIn.startWaveLength + i*(spectralIn.step);
-            y1[i] = spectralIn.I[color1][i];
+            x1[i] = spectralIn->startWaveLength + i*(spectralIn->step);
+            y1[i] = spectralIn->I[color1][i];
         }
         xmin = x1[0];
         xmax = x1[ncols-1]+1;
@@ -269,8 +268,8 @@ void PlotWindow::plotSpectralData(int color1, int color2) {
     //Get color for index color2
     if(color2 >= 0) {
         for (i = 0; i < ncols; i++) {
-            x2[i] = spectralIn.startWaveLength + i*(spectralIn.step);
-            y2[i] = spectralIn.I[color2][i];
+            x2[i] = spectralIn->startWaveLength + i*(spectralIn->step);
+            y2[i] = spectralIn->I[color2][i];
         }
         xmin = x2[0];
         xmax = x2[ncols-1]+1;
@@ -287,7 +286,7 @@ void PlotWindow::plotSpectralData(int color1, int color2) {
     plenv(xmin, xmax, ymin, ymax, 0, 0);
 
     QString title("");
-    // title += spectralIn.color_name[color1].c_str();
+    // title += spectralIn->color_name[color1].c_str();
     title += " WaveLenght Spectrum";
     pllab("(Wavelength)", "(Intensity)", title.toStdString().c_str());
 
@@ -308,7 +307,7 @@ void PlotWindow::plotSpectralData(int color1, int color2) {
 
     if(color1 >= 0 && color2 >= 0){
         for (i = 0; i < ncols; i++) {
-            xRes[i] = spectralIn.startWaveLength + i*(spectralIn.step);
+            xRes[i] = spectralIn->startWaveLength + i*(spectralIn->step);
             yRes[i] = resultSpectrum.I[0][i];
         }
         plcol0(1);
@@ -356,13 +355,15 @@ void PlotWindow::drawLegends(){
     // from the above opt_arrays we can completely ignore everything
     // to do with boxes.
     const char *legend_text[3];
-    legend_text[0] = spectralIn.color_name[colorIndex1].c_str();
+    string tmp = spectralIn->color_name[colorIndex1].toStdString();
+    legend_text[0] = tmp.c_str();
 
-    legend_text[1] = spectralIn.color_name[colorIndex2].c_str();
+    string tmp2 = spectralIn->color_name[colorIndex2].toStdString();
+    legend_text[1] = tmp2.c_str();
 
-    string color_sum = spectralIn.color_name[colorIndex1];
+    string color_sum = spectralIn->color_name[colorIndex1].toStdString();
     color_sum += "+";
-    color_sum += spectralIn.color_name[colorIndex2];
+    color_sum += spectralIn->color_name[colorIndex2].toStdString();
     legend_text[2] = color_sum.c_str();
 
     plscol0a( 15, 32, 32, 32, 0.70 );
@@ -380,22 +381,20 @@ void PlotWindow::drawLegends(){
 
 }
 
-void PlotWindow::setSpectralData(SpectralData in) {
+void PlotWindow::setSpectralData(SpectralData *in) {
     this->spectralIn  = in;
     colorChooseDock->clearColours();
 
-    for(uint i = 0 ; i < this->spectralIn.color_name.size(); i++) {
-        colorChooseDock->addColor(i, QString(
-                this->spectralIn.color_name[i].c_str()
-                ));
+    for(uint i = 0 ; i < this->spectralIn->color_name.size(); i++) {
+        colorChooseDock->addColor(i, this->spectralIn->color_name[i]);
     }
 
-    resultSpectrum.freeSpectralData();
-    resultSpectrum.step = spectralIn.step;
-    resultSpectrum.startWaveLength = spectralIn.startWaveLength;
-    resultSpectrum.endWaveLength = spectralIn.endWaveLength;
-    int ncols = (spectralIn.endWaveLength - spectralIn.startWaveLength)
-                / spectralIn.step + 1;
+    resultSpectrum.clearColorData();
+    resultSpectrum.step = spectralIn->step;
+    resultSpectrum.startWaveLength = spectralIn->startWaveLength;
+    resultSpectrum.endWaveLength = spectralIn->endWaveLength;
+    int ncols = (spectralIn->endWaveLength - spectralIn->startWaveLength)
+                / spectralIn->step + 1;
 
     resultSpectrum.I = new double*[1];
     resultSpectrum.I[0] = new double[ncols];
@@ -410,7 +409,7 @@ void PlotWindow::helpAbout(){
 }
 
 void PlotWindow::quit() {
-    resultSpectrum.freeSpectralData();
+    resultSpectrum.clearAllSpectralData();
     QApplication::quit();
 
 }

@@ -1,2 +1,6 @@
 *.o
 moc_*
+Makefile*
+ui_*
+.deps
+*.pro.user

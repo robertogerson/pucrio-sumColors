@@ -1,3 +1,4 @@
+CONFIG   += debug
 QT       += core gui svg
 
 TARGET = trabCor
@@ -24,4 +25,4 @@ HEADERS  +=\
 
 FORMS    += \
     ui/colorinformationdock.ui \
-    ColorChooseDock.ui
+    ui/ColorChooseDock.ui

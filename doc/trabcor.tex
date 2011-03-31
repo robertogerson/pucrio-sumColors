@@ -113,7 +113,71 @@ Soon.
 \section{Implementação}
 Soon.
 
-\section{Linearidade dos Espaços de Cor}
+\section{Análise da Linearidade dos Espaços de Cor}
+\par
+Esta seção discute a linearidade dos Espaços de Cor apresentados acima, baseado
+na implementação do trabalho. Para isso, primeiro temos que definir o que é um
+espaço liner.
+\par
+Um espaço real R^n é dito linear quando, dados:
+
+\begin{list}
+\item C1 = (x1, y2, ..., xn) e
+\item C2 = (y1, y2, ..., yn)
+\end{list}
+
+\par
+pertencentes a esse espaço, pelo menos as duas propriedades a seguir são válidas
+(existem algumas outras propriedades quando o espaço é de número complexos):
+
+\begin{list}{\Roman{qcounter1}:~}{\usecounter{qcounter1}}
+\item C1+C2 = (x1+y1, x2+y2, ..., xn+yn); e
+\item aC1 = (ax1, ax2, ..., axn)
+\end{list}
+\subsection{CIEXYZ}
+
+\subsection{CIExyZ}
+\par
+Ao somar o espectro de duas cores, o resultado no sistema xyY é uma cor que está
+na posição intermediária entre as cores iniciais. Se as cores originais
+adicionadas estiverem na mesma proporção, teremos x resultante na média dos x's
+originais e y resultante na média dos y's originais. Percebe-se assim,
+claramente que estamos "misturando" a crominância das duas cores, já que ao
+traçarmos uma segmento de reta entre as duas cores originais, esta nova cor
+estará no ponto média deste segmento.
+
+\par
+É interessante observar também que ao somarmos o espectros de duas cores iguais,
+temos como resultado a mesma cor, mas com uma luminância maior. Por isso, as
+componentes de cromaticidade (x e y) são iguais ao valor original (já que a
+média de dois valores iguais é ele mesmo) e o Y resultante é um valor maior do
+que o Y original.
+
+\par
+Voltando ao xyY, como o exemplo mostra, isso não é verdade. E, isso não é
+verdade pelo fato de que o x e y são sempre valores entre 0.0 e 1.0. As fórmulas
+de x e y:
+
+\begin{list}
+\item x = X/(X+Y+Z); 
+\item y = Y/(X+Y+Z);
+\item x+y+z = 1;
+\end{list}
+
+por normalizarem os valores de XYZ, já dão uma pista de que nunca poderemos ter
+uma soma maior que 1.0 em uma das componentes. Por exemplo, se somarmos 0.8 +
+0.8, nunca podemos ter 1.6 como resultado, invalidando a propriedade I.
+
+\subsection{CIELuv}
+Soon.
+
+\subsection{CIELab}
+Soon.
+
+\subsection{RGB}
+Soon.
+
+\subsection{sRGB}
 Soon.
 
 \section{Arquivos}
