@@ -314,6 +314,11 @@ void SpectralData::convertToCIELab( int colorIndex,
     double Yw = 100;
     double Zw = 108.883;
 
+    //Tristimulus Reference D50
+    Xw = 96.422;
+    Yw = 100.000;
+    Zw = 82.521;
+
     double xn = X/Xw;
     double yn = Y/Yw;
     double zn = Z/Zw;
@@ -335,8 +340,13 @@ void SpectralData::convertToCIELuv(int colorIndex,
 
     // Tristimulus Reference to D65
     double Xw = 95.047;
-    double Yw = 100;
+    double Yw = 100.00;
     double Zw = 108.883;
+
+    //Tristimulus Reference D50
+    Xw = 96.422;
+    Yw = 100.000;
+    Zw = 82.521;
 
     double ref_X = Xw;
     double ref_Y = Yw;

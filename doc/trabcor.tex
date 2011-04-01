@@ -38,7 +38,6 @@ diretamente relacionado com o estudo da luz.
 
 \par
 
-
 \section{Enunciado do Trabalho}
 \par
 Um dos padrões de cor mais difundidos é o \textit{Macbeth Color Checker}
@@ -70,8 +69,12 @@ novo espectro as componentes CIEXYZ, CIExyY, CIELuv, CIELab e sRGB.
 
 \section{Percepção da Cor}
 \subsection{Observador padrão CIE}
-\par
-
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=1.0]{img/cie_std_observer.png}
+     \caption{CIE Standard Observer.}
+     \label{Label de referência para a imagem}
+\end{figure}
 
 \subsection{Adaptação do sistema humano}
 \par
@@ -121,19 +124,25 @@ espaço liner.
 \par
 Um espaço real R^n é dito linear quando, dados:
 
-\begin{list}
-\item C1 = (x1, y2, ..., xn) e
-\item C2 = (y1, y2, ..., yn)
-\end{list}
+\begin{equation}\label{eqC1}
+C1=(x1,x2, ..., xn)
+\end{equation}
+
+\begin{equation}\label{eqC2}
+C2=(y1, y2, ..., yn)
+\end{equation}
 
 \par
 pertencentes a esse espaço, pelo menos as duas propriedades a seguir são válidas
 (existem algumas outras propriedades quando o espaço é de número complexos):
 
-\begin{list}{\Roman{qcounter1}:~}{\usecounter{qcounter1}}
-\item C1+C2 = (x1+y1, x2+y2, ..., xn+yn); e
-\item aC1 = (ax1, ax2, ..., axn)
-\end{list}
+\begin{equation}
+C_1+C_2 = (x1+y1, x_2+y_2, ..., x_n+y_n); e
+\end{equation}
+\begin{equation}
+\item \alpha.C_1 = (\alpha.x_1, \alpha.x_2, ..., \alpha.x_n)
+\end{equation}
+
 \subsection{CIEXYZ}
 
 \subsection{CIExyZ}
@@ -147,29 +156,38 @@ traçarmos uma segmento de reta entre as duas cores originais, esta nova cor
 estará no ponto média deste segmento.
 
 \par
-É interessante observar também que ao somarmos o espectros de duas cores iguais,
-temos como resultado a mesma cor, mas com uma luminância maior. Por isso, as
-componentes de cromaticidade (x e y) são iguais ao valor original (já que a
-média de dois valores iguais é ele mesmo) e o Y resultante é um valor maior do
-que o Y original.
+É interessante observar também que ao somarmos os espectros de duas cores
+iguais, temos como resultado a mesma cor, mas com uma luminância maior. Por
+isso, as componentes de cromaticidade (x e y) são iguais ao valor original (já
+que a média de dois valores iguais é ele mesmo) e o Y resultante é um valor
+maior do que o Y original.
 
 \par
-Voltando ao xyY, como o exemplo mostra, isso não é verdade. E, isso não é
-verdade pelo fato de que o x e y são sempre valores entre 0.0 e 1.0. As fórmulas
+Voltando ao sistema xyY, como o exemplo mostra, isso não é verdade. E, isso não
+é verdade pelo fato de que x e y são sempre valores entre 0.0 e 1.0. As fórmulas
 de x e y:
 
-\begin{list}
-\item x = X/(X+Y+Z); 
-\item y = Y/(X+Y+Z);
-\item x+y+z = 1;
-\end{list}
+\begin{equation}
+x=\frac{X}{X+Y+Z}
+\end{equation}
+
+\begin{equation}
+y=\frac{Y}{X+Y+Z}
+\end{equation}
+
+\begin{equation}
+x+y+z=1
+\end{equation}
 
 por normalizarem os valores de XYZ, já dão uma pista de que nunca poderemos ter
 uma soma maior que 1.0 em uma das componentes. Por exemplo, se somarmos 0.8 +
 0.8, nunca podemos ter 1.6 como resultado, invalidando a propriedade I.
 
 \subsection{CIELuv}
-Soon.
+Visto que o espaço de cor CIELuv é uma transformação linear do espaço xyY, é
+fácil perceber que a mesma linearidade é mantida. Assim como no espaço xyY a
+adição de cores resulta em uma nova cor que está na semi-reta definida pelas
+duas cores iniciais.
 
 \subsection{CIELab}
 Soon.
