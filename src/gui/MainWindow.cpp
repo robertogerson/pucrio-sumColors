@@ -43,6 +43,11 @@ void PlotWindow::createDocks() {
              this,
              SLOT(changeColor2(int)));
 
+    connect(colorChooseDock->getIlluminantsComboBox(),
+            SIGNAL(currentIndexChanged(QString)),
+            this,
+            SLOT(changeIlluminant(QString)));
+
     colorInfoDock = new ColorInformationDock(this);
     this->addDockWidget(Qt::LeftDockWidgetArea, colorInfoDock);
     colorInfoDock->setMinimumWidth(350);
@@ -98,6 +103,14 @@ void PlotWindow::interactive() {
 
 }
 
+void PlotWindow::changeIlluminant(QString new_illuminant){
+    string illuminant = new_illuminant.toStdString();
+    spectralIn->setCurrentIlluminant(illuminant);
+    resultSpectrum.setCurrentIlluminant(illuminant);
+
+    changeColor1(colorIndex1); changeColor2(colorIndex2);
+}
+
 void PlotWindow::changeColor1(int color) {
     colorIndex1 = color;
     updatePlot();
@@ -121,7 +134,7 @@ void PlotWindow::changeColor1(int color) {
     spectralIn->convertToCIELuv(color, L, u, v);
     colorInfoDock->setCIELuv(L, u, v);
 
-    spectralIn->convertToRGB(color, R, G, B);
+//    spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor(R, G, B);
 
     updateResultColor();
@@ -151,7 +164,7 @@ void PlotWindow::changeColor2(int color) {
     spectralIn->convertToCIELuv(color, L, u, v);
     colorInfoDock->setCIELuv_2(L, u, v);
 
-    spectralIn->convertToRGB(color, R, G, B);
+//    spectralIn->convertToRGB(color, R, G, B);
     colorInfoDock->setSampleColor_2(R, G, B);
 
     updateResultColor();
@@ -194,7 +207,7 @@ void PlotWindow::updateResultColor(){
     resultSpectrum.convertToCIELuv(0, L, u, v);
     colorInfoDock->setCIELuv_Res(L, u, v);
 
-    resultSpectrum.convertToRGB(0, R, G, B);
+//    resultSpectrum.convertToRGB(0, R, G, B);
     colorInfoDock->setSampleColor_Res(R, G, B);
 
     updatePlot();
@@ -214,11 +227,13 @@ void PlotWindow::switchNormalizeResultSpectrum() {
 void PlotWindow::updatePlot() {
     plotColorSpectrum->clearWidget();
     if(stdObserverSpectrumActived) {
-        plssub(1, 2);
+        plssub(2, 3);
+        plotColoursSystems();
         plotStdObserverFunction();
     }
     else
         plssub(1, 1);
+
     plotSpectralData(colorIndex1, colorIndex2);
 
 }
@@ -320,12 +335,12 @@ void PlotWindow::plotSpectralData(int color1, int color2) {
 
     /* Draw the line1, line2 and resulting spectrum through the data */
     if(color1 >= 0) {
-        plcol0(2);
+        plcol0(3);
         plline(ncols, x1, y1);
     }
 
     if(color2 >= 0) {
-        plcol0(3);
+        plcol0(2);
         plline(ncols, x2, y2);
     }
 
@@ -355,8 +370,8 @@ void PlotWindow::drawLegends(){
     PLFLT        legend_width, legend_height;
 
     opt_array[0]   = PL_LEGEND_LINE;
-    text_colors[0] = 2;
-    line_colors[0] = 2;
+    text_colors[0] = 3;
+    line_colors[0] = 3;
     line_styles[0] = 1;
     line_widths[0] = 1;
     // note from the above opt_array the first symbol (and box) indices
@@ -364,8 +379,8 @@ void PlotWindow::drawLegends(){
 
     // Second legend entry.
     opt_array[1]   = PL_LEGEND_LINE;
-    text_colors[1] = 3;
-    line_colors[1] = 3;
+    text_colors[1] = 2;
+    line_colors[1] = 2;
     line_styles[1] = 1;
     line_widths[1] = 1;
 
@@ -425,8 +440,117 @@ void PlotWindow::setSpectralData(SpectralData *in) {
 
     colorChooseDock->getListWidgetColor1()->setCurrentRow(0);
     colorChooseDock->getListWidgetColor2()->setCurrentRow(0);
+
+    string key;
+    colorChooseDock->clearIlluminants();
+    foreach (key, spectralIn->illuminants.keys()) {
+        colorChooseDock->addIlluminant(QString(key.c_str()));
+    }
 }
 
+void PlotWindow::plotColoursSystems(){
+    //PLOT XY from XYZ
+    double X[3], Y[3], Z[3];
+    spectralIn->convertToCIEXYZ(colorIndex1, X[0], Y[0], Z[0]);
+    spectralIn->convertToCIEXYZ(colorIndex2, X[1], Y[1], Z[1]);
+    resultSpectrum.convertToCIEXYZ(0, X[2], Y[2], Z[2]);
+
+    double xmin = 10000.00, ymin = 10000.00, xmax = -10000.00, ymax = -10000.00;
+    for(int i = 0; i < 3; i++) {
+        if(xmin > X[i]) xmin = X[i] - 10.0;
+        if(ymin > Y[i]) ymin = Y[i] - 10.0;
+
+        if(ymax < Y[i]) ymax = Y[i] + 10.0;
+        if(xmax < X[i]) xmax = X[i] + 10.0;
+    }
+
+    plcol0(1);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    QString title("");
+    // title += spectralIn->color_name[color1].c_str();
+    title += " Sum in XYZ Color System";
+    pllab("( X )", "( Y )", title.toStdString().c_str());
+    // draw grid
+    for(int i = 0; i < 3; i++){
+        plcol0(3-i);
+        plpoin(1, &X[i], &Y[i], 5);
+    }
+
+    //PLOT xy from xyY
+    double x[3], y[3];
+    spectralIn->convertToCIExyY(colorIndex1, x[0], y[0], Y[0]);
+    spectralIn->convertToCIExyY(colorIndex2, x[1], y[1], Y[1]);
+    resultSpectrum.convertToCIExyY(0, x[2], y[2], Y[2]);
+
+    xmin = 0.0, ymin = 0.0, xmax = 1.0, ymax = 1.0;
+
+    plcol0(1);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    title = "";
+    title += " Sum in xyY Color System";
+    pllab("( x )", "( y )", title.toStdString().c_str());
+
+    // draw grid
+    plcol0( 15 );
+    plbox( "g", 15.0, 0, "g", 0.1, 0 );
+    for(int i = 0; i < 3; i++){
+        plcol0(3-i);
+        plpoin(1, &x[i], &y[i], 5);
+    }
+
+    //PLOT ab from Lab
+    double L[3], a[3], b[3];
+    spectralIn->convertToCIELab(colorIndex1, L[0], a[0], b[0]);
+    spectralIn->convertToCIELab(colorIndex2, L[1], a[1], b[1]);
+    resultSpectrum.convertToCIELab(0, L[2], a[2], b[2]);
+
+    xmin = 1000.0, ymin = 1000.0, xmax = -1000.0, ymax = -1000.0;
+    for(int i = 0; i < 3; i++) {
+        if(xmin > a[i]) xmin = a[i] - 10.0;
+        if(ymin > b[i]) ymin = b[i] - 10.0;
+
+        if(xmax < a[i]) xmax = a[i] + 10.0;
+        if(ymax < b[i]) ymax = b[i] + 10.0;
+    }
+
+    plcol0(1);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    title = "";
+    title += " Sum in L*a*b* Color System";
+    pllab("( a* )", "( b* )", title.toStdString().c_str());
+
+    for(int i = 0; i < 3; i++){
+        plcol0(3-i);
+        plpoin(1, &a[i], &b[i], 5);
+    }
+
+    // PLOT u*v* from L*u*v*
+    double u[3], v[3];
+    spectralIn->convertToCIELuv(colorIndex1, L[0], u[0], v[0]);
+    spectralIn->convertToCIELuv(colorIndex2, L[1], u[1], v[1]);
+    resultSpectrum.convertToCIELuv(0, L[2], u[2], v[2]);
+
+//    xmin = 0.0 ; ymin = 0; xmax = 1.0; ymax = 1.0;
+    xmin = 1000.00, ymin = 1000.0, xmax = -1000.0, ymax = -1000.0;
+    for(int i = 0; i < 3; i++) {
+        if(xmin > u[i]) xmin = u[i] - 10.0;
+        if(ymin > v[i]) ymin = v[i] - 10.0;
+
+        if(xmax < u[i]) xmax = u[i] + 10.0;
+        if(ymax < v[i]) ymax = v[i] + 10.0;
+    }
+
+    plcol0(1);
+    plenv(xmin, xmax, ymin, ymax, 0, 0);
+    title = "";
+    title += " Sum in L*u*v* Color System";
+    pllab("( u* )", "( v* )", title.toStdString().c_str());
+
+    for(int i = 0; i < 3; i++){
+        plcol0(3-i);
+        plpoin(1, &u[i], &v[i], 5);
+    }
+}
 
 void PlotWindow::helpAbout(){
     QApplication::aboutQt();

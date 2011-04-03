@@ -45,6 +45,7 @@ private:
     void plotSpectralData(int color1, int color2);
     void plotStdObserverFunction();
     void drawLegends();
+    void plotColoursSystems();
     void updateResultColor();
 
 public:
@@ -68,6 +69,7 @@ public slots:
     void interactive();
     void changeColor1(int color);
     void changeColor2(int color);
+    void changeIlluminant(QString new_illuminant);
     void updatePlot();
     void switchStdObsFuncVisibility();
     void quit();

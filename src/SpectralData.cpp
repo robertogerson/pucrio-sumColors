@@ -19,6 +19,10 @@ SpectralData::~SpectralData() {
     clearAllSpectralData();
 }
 
+void SpectralData::setCurrentIlluminant(string illuminant){
+    this->current_illuminant = illuminant;
+}
+
 void SpectralData::readStandardObserverFromFile(const char *filePath) {
     ifstream inFile;
     qDebug() << "Reading StandardObserver file: " << filePath;
@@ -183,7 +187,7 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
              (this->step);
     }
 
-    double sum_x = 0.0, sum_y = 0.0, sum_z =0.0;
+    double sum_x = 0.0, sum_y = 0.0, sum_z = 0.0;
 
     for(uint i = 0; i < ncols; i++) {
         wavelength = this->startWaveLength + i * (this->step);
@@ -209,9 +213,9 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
     y = sum_y/(sum_x+sum_y+sum_z);
 
     //    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
-    Y = sum_y;
-    X = (x/y)*(Y);
-    Z = ((1-x-y)/y)*(Y);
+     Y = sum_y;
+     X = (x/y)*(Y);
+     Z = ((1-x-y)/y)*(Y);
 }
 
 void SpectralData::convertToCIExyY( int colorIndex,
@@ -239,10 +243,10 @@ void SpectralData::convertTosRGB( int colorIndex,
     B = (b/100)*255;
 
     // X /= 100; Y /= 100; Z /= 100;
+
     // Tristimulus Reference to D65
-    double Xw = 95.047;
-    double Yw = 100;
-    double Zw = 108.883;
+    double Xw, Yw, Zw;
+    tristimulusFromCurrentIlluminant(Xw, Yw, Zw);
 
     double gamma = 1/2.4;
     //livro de gattas implementation
@@ -305,19 +309,12 @@ void SpectralData::convertToRGB( int colorIndex,
 }
 
 void SpectralData::convertToCIELab( int colorIndex,
-                                 double &L, double &a, double &b) {
+                                    double &L, double &a, double &b) {
     double X, Y, Z;
     convertToCIEXYZ(colorIndex, X, Y, Z);
 
-    // Tristimulus Reference to D65
-    double Xw = 95.047;
-    double Yw = 100;
-    double Zw = 108.883;
-
-    //Tristimulus Reference D50
-    Xw = 96.422;
-    Yw = 100.000;
-    Zw = 82.521;
+    double Xw, Yw, Zw; //tristimulus from current illuminant
+    tristimulusFromCurrentIlluminant(Xw, Yw, Zw);
 
     double xn = X/Xw;
     double yn = Y/Yw;
@@ -333,21 +330,24 @@ void SpectralData::convertToCIELab( int colorIndex,
 }
 
 void SpectralData::convertToCIELuv(int colorIndex,
-                                double &L, double &u, double &v) {
+                                   double &L, double &u, double &v) {
 
     double X, Y, Z;
     convertToCIEXYZ(colorIndex, X, Y, Z);
 
-    // Tristimulus Reference to D65
-    double Xw = 95.047;
-    double Yw = 100.00;
-    double Zw = 108.883;
+    double Xw, Yw, Zw;
+    // Get tristimulus from current illuminant
+    tristimulusFromCurrentIlluminant(Xw, Yw, Zw);
 
-    //Tristimulus Reference D50
-    Xw = 96.422;
-    Yw = 100.000;
-    Zw = 82.521;
+    // Lu'v'
+    u = (4 * X) / (X + (15 * Y) + (3 * Z) );
+    v = (6 * Y) / (X + (15 * Y) + (3 * Z) );
 
+    // Lu'v'
+    u = (4 * X) / (X+15*Y+3*Z);
+    v = (9 * Y) / (X + 15 * Y+ 3 * Z);
+
+    /* Gattas Implementation */
     double ref_X = Xw;
     double ref_Y = Yw;
     double ref_Z = Zw;
@@ -357,14 +357,27 @@ void SpectralData::convertToCIELuv(int colorIndex,
 
     double var_U = ( 4 * X ) / ( X + ( 15 * Y ) + ( 3 * Z ) );
     double var_V = ( 9 * Y ) / ( X + ( 15 * Y ) + ( 3 * Z ) );
-    double var_Y = Y / 100;
+    double var_Y = Y / Yw;
 
 
     if ( var_Y > 0.008856 ) var_Y = pow(var_Y,( 1./3 ));
-    else                    var_Y = (( 7.787 * var_Y ) + ( 16./ 116 ));
+    else var_Y = (( 7.787 * var_Y ) + ( 16./ 116 ));
 
 
     L = ( 116 * var_Y ) - 16;
     u = 13 * L * ( var_U - ref_U );
     v = 13 * L * ( var_V - ref_V );
+}
+
+void SpectralData::tristimulusFromCurrentIlluminant(double &Xw, double &Yw, double &Zw){
+    if(current_illuminant == "D50") {
+        Xw = 95.047;
+        Yw = 100.00;
+        Zw = 108.883;
+
+    } else if(current_illuminant == "D65") {
+        Xw = 96.422;
+        Yw = 100.000;
+        Zw = 82.521;
+    }
 }

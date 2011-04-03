@@ -26,6 +26,8 @@ public:
     //Map Illuminant Name -> Spectrum
     QMap < string, QMap <int, double> * > illuminants;
     string current_illuminant;
+    void setCurrentIlluminant(string illuminant);
+    void tristimulusFromCurrentIlluminant(double &Xw, double &Yw, double &Zw);
 
     SpectralData();
     virtual ~SpectralData();

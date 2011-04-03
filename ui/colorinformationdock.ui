@@ -42,7 +42,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_7">
           <property name="title">
-           <string>Color One</string>
+           <string>Color 1</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
@@ -453,7 +453,7 @@
         <item>
          <widget class="QGroupBox" name="groupBox_8">
           <property name="title">
-           <string>Color two</string>
+           <string>Color 2</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_21">
            <item>

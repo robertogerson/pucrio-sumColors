@@ -4,6 +4,7 @@
 #include <QDockWidget>
 #include <QStringListModel>
 #include <QListWidget>
+#include <QComboBox>
 #include <QDebug>
 
 namespace Ui {
@@ -20,11 +21,18 @@ public:
 
     void clearColours();
     void addColor(int index, QString &color_name);
+
+    //TODO: Hide this functions. Transform in signals
     QListWidget *getListWidgetColor1();
     QListWidget *getListWidgetColor2();
+    QComboBox *getIlluminantsComboBox();
+
+    void clearIlluminants();
+    void addIlluminant(QString illuminant);
 
 private:
     Ui::ColorChooseDock *ui;
+
 };
 
 #endif // COLORCHOOSEDOCK_H

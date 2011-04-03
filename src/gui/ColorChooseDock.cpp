@@ -32,3 +32,15 @@ QListWidget *ColorChooseDock::getListWidgetColor1(){
 QListWidget *ColorChooseDock::getListWidgetColor2(){
     return ui->listWidgetColor2;
 }
+
+void ColorChooseDock::clearIlluminants(){
+    ui->comboBox->clear();
+}
+
+void ColorChooseDock::addIlluminant(QString illuminant){
+    ui->comboBox->addItem(illuminant);
+}
+
+QComboBox * ColorChooseDock::getIlluminantsComboBox(){
+    return ui->comboBox;
+}

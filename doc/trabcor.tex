@@ -18,8 +18,8 @@
 \maketitle
 
 \begin{abstract}
-Este documento apresenta a base teórica para os trabalhos desenvolvidos no
-escopo da disciplina \htmladdnormallink{Fundamentos
+Este documento apresenta os trabalhos desenvolvidos, bem como suas bases
+teóricas, no escopo da disciplina \htmladdnormallink{Fundamentos
 de Computação Gráfica (FCG) -
 INF2608}{http://www.tecgraf.puc-rio.br/~mgattass/fcg/fcg.html}, cursada
 durante o Doutorado em Informática pela PUC-Rio. A disciplina de FCG é subdivida
@@ -32,11 +32,14 @@ desses projetos.
 \par
 Sendo a Computação Gráfica (CG) a área da computação destinada ao estudo de
 modelos e algoritmos para o processamento de imagens digitais, o estudo da cor é
-um dos seus fundamentos. A cor é uma sensação humana que os seres humanos têm
-em resposta à luz incidente em nossos olhos. Sendo assim, o estudo da cor está
+um dos seus fundamentos. A cor é uma sensação que os seres humanos têm em
+resposta à luz incidente em nossos olhos. Sendo assim, o estudo da cor está
 diretamente relacionado com o estudo da luz.
 
 \par
+Com o objetivo de melhor entender como nós percebemos as cores e a importância
+de se definir um sistema no qual seja simples representá-las, permitindo, por
+exemplo, reproduzí-las em ambientes virtuais, o seguinte trabalho foi proposto:
 
 \section{Enunciado do Trabalho}
 \par
@@ -67,60 +70,164 @@ novo espectro as componentes CIEXYZ, CIExyY, CIELuv, CIELab e sRGB.
 \item Verificar a linearidade destes sistemas.
 \end{list}
 
-\section{Percepção da Cor}
-\subsection{Observador padrão CIE}
+\section{Conceitos Básicos}
+\subsection{Percepção da Cor}
+\par
+Antes de discutirmos como se deu a implementação do trabalho, é importante
+definirmos alguns conceitos básicos e como se dá o processo de percepção de
+cor, os quais serão úteis para as discussões seguintes.
+
+\par
+Para os nossos propósitos, a luz é descrita por meio de uma curva de
+distribuição espectral. Um tipo específico de luz emite diferentes quantidades
+de energia em cada parte do espectro visível. A Figura
+\ref{fig:visible_spectrum} apresenta o exemplo do espectro de uma luz do dia.
+
 \begin{figure}[!htb]
      \centering
-     \includegraphics[scale=1.0]{img/cie_std_observer.png}
-     \caption{CIE Standard Observer.}
+     \includegraphics[scale=0.8]{img/spectrum_light.png}
+     \caption{Exemplo de espectro da luz do dia. Fonte:
+\htmladdnormallink{DiCosola, Michael}{
+http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
+     \label{fig:visible_spectrum}
+\end{figure}
+
+\par
+Cada comprimento de onda presente no espectro visível é associado a uma cor.
+Quando temos um espectro que emite energia em apenas um dos comprimentos de
+onda, o chamamos de espectro puro. Consequentemente, as cores associadas à
+este tipo de espectro são chamadas de cores de espectro puro (ou 100\%
+saturadas).
+
+\subsubsection{Processo aditivo de formação de cor}
+
+\subsubsection{Tri-cromaticidade}
+
+\subsubsection{Observador padrão CIE}
+\par
+Adicionalmente, a sensibilidade das células fotoceptoras (cones e
+bastonetes) em nossos olhos são diferentes para cada comprimento de onda, de
+tal forma que a energia em alguns comprimentos precisam ser maior para
+percebemos alguma diferença.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.8]{img/cie_std_observer.png}
+     \caption{Observador Padrão CIE.}
      \label{Label de referência para a imagem}
 \end{figure}
 
-\subsection{Adaptação do sistema humano}
 \par
-Adaptação da visão (luz/escuro)
+Entretanto, nós, seres humanos, somos sensível ao espectro de luz que
+chega em nossos olhos. Não conseguimos assim distinguir a energia de cada
+comprimento de onda individualmente.
+
+Dessa forma, o estímulo de cada espectro de luz é
+associado à uma cor.
+
+\subsection{Iluminantes}
+\par
+Também é importante definirmos a diferença de uma \textit{fonte de luz} para um
+\textit{iluminante}. Uma fonte de luz é algo realmente físico, que existe e
+pode ser ligada ou desligada para iluminar algo. Por outro lado, um iluminante é
+uma luz que foi definida apenas pela sua distribuição espectral, mas não
+necessariamente existe. Assim, se, através de experimentos definirmos a
+distribuição espectral de uma fonte de luz sobre um branco, nós definimos um
+iluminante. Essa diferença é importante pois estamos muito mais interessados
+nos iluminantes, os quais existindo ou não, podemos estudar numericamente, como
+um determinado será visualizado quando iluminado por ele.
 
 \par
-Influência do ambiente (tamanho, cor de background etc.). Transformar a
-cor de um display para que tenha a mesma aparência impressa. Outro exemplo:
-dado a cor em um background, calcular a cor que "aparenta ser a mesma" e
+A cor de um objeto nada mais é do que o espectro resultante de todas as
+interações da luz com ele e que ele emite. É fácil perceber que ao ser iluminado
+por fontes de luz diferentes um mesmo objeto pode ter cores diferentes. Isso
+porque a própria fonte de luz também tem uma cor. Isso fica claro quando a
+definimos como um iluminante, pois sua distribuição espectral define a "cor" do
+iluminante. As Figuras a seguir apresentam os espectros de dois iluminantes
+padrão: D50 e D65.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.8]{img/illuminant_d50.png}
+     \caption{Espectro do iluminante D50. Fonte:
+\htmladdnormallink{DiCosola, Michael}{
+http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
+     \label{fig:illuminant_d50}
+\end{figure}
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.8]{img/illuminant_d65.png}
+     \caption{Espectro do Iluminante D65. Fonte:
+\htmladdnormallink{DiCosola, Michael}{
+http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
+     \label{fig:illuminant_d65}
+\end{figure}
 
 \par
-Modelos da aparência de cor. Um modelo de aparência de cor deve considerar
-todas as cores em uma imagem, ao invés da cor dos pixels individualmente.
-
-\par
-Medida dos Estimulus Físicos -> Cálculo dos Três estímulos -> Cálculo dos
-atributos perceptuais.
-
-\section{Espaços de Cor}
-
-\subsection{CIEXYZ}
-Soon.
-
-\subsection{CIExyZ}
-Soon.
-
-\subsection{CIELuv}
-Soon.
-
-\subsection{CIELab}
-Soon.
-
-\subsection{RGB}
-Soon.
-
-\subsection{sRGB}
-Soon.
+A superfície de um objeto pode refletir de forma diferente diferentes
+comprimentos de onda. Sendo assim, também é possível caracterizar a
+reflectância de um objeto por meio de um gráfico onde, para cada comprimento de
+onda, temos a porcentagem de energia que essa superfície reflete. De posse
+desses dois dados podemos então calcular qual o espectro resultante, e
+consequentemente a cor, que esse objeto terá quando iluminado com um
+determinado iluminante.
 
 \section{Implementação}
-Soon.
+Para apoiar a análise da linearidade dos espaços de cor, que serão detalhados
+na seção a seguir, um aplicativo foi desenvolvido em C/C++. Esse aplicativo
+utiliza o \htmladdnormallink{Qt}{http://qt.nokia.com}, para permitir a
+independência de
+sistema operacional, e a biblioteca
+\htmladdnormallink{plplot}{http://plplot.sourceforge.net}, para desenho dos
+gráficos.
 
-\section{Análise da Linearidade dos Espaços de Cor}
+\par
+No aplicativo desenvolvido é possível, a partir da descrição dos espectros de
+cores informado como entrada, selecionar duas cores. A partir dos espectros
+informados essas cores são convertidas para os espaços XYZ, xyZ, L*u*v*,
+L*a*b* e sRGB. A cor resultando da adição das duas cores selecionadas também é
+convertida para cada um desses espaços de cores.
+
+\subsection{Metodologia}
+
+\subsection{Arquivos de dados}
+
+\subsection{Instalação}
+\subsubsection{Pacotes pré-compilados}
+
+\subsubsection{A partir do código-fonte}
+This repository is for Roberto Azevedo's programs developed in the scope of the
+Foundations of Computer Graphics discipline. This discipline was coursed during
+the Roberto Doctoral course in Pontificial Catholic University of Rio de Janeiro
+(PUC-Rio). Marcelo Gattass (http://www.tecgraf.puc-rio.br/~mgattass) was the
+teacher.
+
+Computer Graphics, PUC-Rio, Color, Image, 3D.
+
+\subsection{Screenshots}
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.7]{img/screenshot_RGColorConverter.png}
+     \caption{Screenshot do espectro da soma duas cores}
+     \label{fig:screenshot_01}
+\end{figure}
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.7]{img/screenshot_RGColorConverter_details.png}
+     \caption{Resultado da conversão das cores iniciais e da soma dos
+espectros em detalhes}
+     \label{fig:screenshot_details}
+\end{figure}
+
+\section{Análise da linearidade dos espaços de cor}
 \par
 Esta seção discute a linearidade dos Espaços de Cor apresentados acima, baseado
 na implementação do trabalho. Para isso, primeiro temos que definir o que é um
-espaço liner.
+espaço linear.
+
 \par
 Um espaço real R^n é dito linear quando, dados:
 
@@ -144,8 +251,25 @@ C_1+C_2 = (x1+y1, x_2+y_2, ..., x_n+y_n); e
 \end{equation}
 
 \subsection{CIEXYZ}
+\par
+O espaço de cor CIE XYZ é naturalmente linear!
 
-\subsection{CIExyZ}
+\subsection{CIExyY}
+As coordenadas de cromaticidade x, y, z são definidas em termos dos valores
+dos três estímulos XYZ acima:
+
+\begin{equation}\label{eq:xyz_x}
+x=\frac{X}{X+Y+Z}
+\end{equation}
+
+\begin{equation}\label{eq:xyz_y}
+y=\frac{Y}{X+Y+Z}
+\end{equation}
+
+\begin{equation}\label{eq:xyz_z}
+x+y+z=1
+\end{equation}
+
 \par
 Ao somar o espectro de duas cores, o resultado no sistema xyY é uma cor que está
 na posição intermediária entre as cores iniciais. Se as cores originais
@@ -165,50 +289,113 @@ maior do que o Y original.
 \par
 Voltando ao sistema xyY, como o exemplo mostra, isso não é verdade. E, isso não
 é verdade pelo fato de que x e y são sempre valores entre 0.0 e 1.0. As fórmulas
-de x e y:
-
-\begin{equation}
-x=\frac{X}{X+Y+Z}
-\end{equation}
-
-\begin{equation}
-y=\frac{Y}{X+Y+Z}
-\end{equation}
-
-\begin{equation}
-x+y+z=1
-\end{equation}
-
-por normalizarem os valores de XYZ, já dão uma pista de que nunca poderemos ter
+de x e y (vide \ref{eq:xyz_x}, \ref{eq:xyz_y} e \ref{eq:xyz_z}), por
+normalizarem os valores de XYZ, já dão uma pista de que nunca poderemos ter
 uma soma maior que 1.0 em uma das componentes. Por exemplo, se somarmos 0.8 +
 0.8, nunca podemos ter 1.6 como resultado, invalidando a propriedade I.
 
-\subsection{CIELuv}
-Visto que o espaço de cor CIELuv é uma transformação linear do espaço xyY, é
-fácil perceber que a mesma linearidade é mantida. Assim como no espaço xyY a
-adição de cores resulta em uma nova cor que está na semi-reta definida pelas
-duas cores iniciais.
+\subsection{CIELUV (Luv, Lu'v' e L*u*v*)}
+\par
+O Luv é um espaço de cor quase uniforme proposto na convenção do CIE em 1960.
+O Luv é uma transformação linear simples do espaço xyY em uma tentativa de
+torná-lo perceptualmente uniforme. Este espaço é definido por:
+
+\begin{equation}\label{eq:Luv_u}
+u=\frac{4.X}{X+15.Y+3.Z}=\frac{4.x}{-2.x+12.y+3}
+\end{equation}
+
+\begin{equation}\label{eq:Luv_v}
+v=\frac{6.Y}{X+15.Y+3.Z}=\frac{6.x}{-2.x+12.y+3}
+\end{equation}
+
+\par
+Sendo a transformação de uv para xy é dada por:
+\begin{equation}\label{eq:Luv_xy}
+x=\frac{6.u}{6.u-16.v+12}\;\;\;\; y=\frac{4.v}{6.u-16.v+12}
+\end{equation}
+
+\par
+Por se tratar de uma transformação linear sobre o xyY, uma reta no espaço xyY 
+também se converte em uma reta no espaço Luv. Sendo assim, a mesma linearidade
+obtida na soma de duas cores para o xyY é obtida no Luv - ou seja, a soma de
+duas cores resulta em um cor que está na semi-reta definida pelas cores
+iniciais.
+
+\subsubsection{Lu'v'}
+\par
+Uma pequena modificação no Luv foi realizada pelo CIE em 1976, definindo um
+diagrama de cromaticidade u'v', onde: 
+
+\begin{equation}\label{eq:Lu'v'_u'}
+u'=u=\frac{4.X}{X+15.Y+3.Z}=\frac{4.x}{-2.x+12.y+3}
+\end{equation}
+
+\begin{equation}\label{eq:Lu'v'_v'}
+v'=1.5.v=\frac{9.Y}{X+15.Y+3.Z}=\frac{9.x}{-2.x+12.y+3}
+\end{equation}
+
+\par
+Mais uma vez, por se tratar de uma simples transformação linear do xyY, a mesma
+linearidade se mantém.
+
+\subsubsection{L*u*v*}
+\par
+Contudo, ainda no ano de 1976, também foi proposto pelo CIE o espaço de cor
+L*u*v*, sendo este espaço o conhecido como CIELUV. O L*u*v* é definido por:
+
+\begin{equation}\label{eq:L*u*v*_L*}
+L^*=116.f(\frac{Y}{Yn})-16,
+\end{equation}
+
+\begin{equation}\label{eq:L*u*v*_u*}
+u^*=13.L^*.[u'-u_n]
+\end{equation}
+
+e
+
+\begin{equation}\label{eq:L*u*v*_v*}
+v^*=13.L^*.[v'-v_n]
+\end{equation}
+
+\par
+Onde $Y_n$ é obtido a partir dos valores dos três estímulos ($X_n$, $Y_n$ e
+$Z_n$) para o branco padrão sobre um determinado iluminante (por exemplo, D50
+ou D65 que foram utilizados neste trabalho). Da mesma forma, $u_n$ e $v_n$
+podem ser obtidos, respectivamente, a partir das formulas \ref{eq:Luv_u} e
+\ref{eq:Luv_v}, substituindo-se os valores para os esses três estímulos.
+
+\par
+No L*u*v*, uma reta no xyY só se converte também em uma reta se o $L^*$ for
+constante.
+
+%TODO: Colocar as figuras comparando Luv, Lu'v' e L*u*v*
+
 
 \subsection{CIELab}
-Soon.
-
-\subsection{RGB}
 Soon.
 
 \subsection{sRGB}
 Soon.
 
-\section{Arquivos}
-Soon.
+\section{Trabalhos Futuros}
+\subsection{Gamut de Cores}
 
-\section{Instalação a partir do código-fonte}
-This repository is for Roberto Azevedo's programs developed in the scope of the
-Foundations of Computer Graphics discipline. This discipline was coursed during
-the Roberto Doctoral course in Pontificial Catholic University of Rio de Janeiro
-(PUC-Rio). Marcelo Gattass (http://www.tecgraf.puc-rio.br/~mgattass) was the
-teacher.
+\subsection{Adaptação do sistema humano}
+\par
+Adaptação da visão (luz/escuro)
 
-Computer Graphics, PUC-Rio, Color, Image, 3D
+\par
+Influência do ambiente (tamanho, cor de background etc.). Transformar a
+cor de um display para que tenha a mesma aparência impressa. Outro exemplo:
+dado a cor em um background, calcular a cor que "aparenta ser a mesma" e
+
+\par
+Modelos da aparência de cor. Um modelo de aparência de cor deve considerar
+todas as cores em uma imagem, ao invés da cor dos pixels individualmente.
+
+\par
+Medida dos Estimulus Físicos -> Cálculo dos Três estímulos -> Cálculo dos
+atributos perceptuais.
 
 \chapter{Imagem}
 Soon.
