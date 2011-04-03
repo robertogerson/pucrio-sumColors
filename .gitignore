@@ -4,3 +4,8 @@ Makefile*
 ui_*
 .deps
 *.pro.user
+*~
+doc/trabcor/*
+!doc/trabcor/*.css
+*.tex.backup
+doc/trabcor.pdf
