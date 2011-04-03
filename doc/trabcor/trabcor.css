@@ -1,0 +1,118 @@
+/* Century Schoolbook font is very similar to Computer Modern Math: cmmi */
+.MATH    { font-family: "Century Schoolbook", serif; }
+.MATH I  { font-family: "Century Schoolbook", serif; font-style: italic }
+.BOLDMATH { font-family: "Century Schoolbook", serif; font-weight: bold }
+
+/* implement both fixed-size and relative sizes */
+SMALL.XTINY		{ font-size : xx-small }
+SMALL.TINY		{ font-size : x-small  }
+SMALL.SCRIPTSIZE	{ font-size : smaller  }
+SMALL.FOOTNOTESIZE	{ font-size : small    }
+SMALL.SMALL		{  }
+BIG.LARGE		{  }
+BIG.XLARGE		{ font-size : large    }
+BIG.XXLARGE		{ font-size : x-large  }
+BIG.HUGE		{ font-size : larger   }
+BIG.XHUGE		{ font-size : xx-large }
+
+/* heading styles */
+H1		{  }
+H2		{  }
+H3		{  }
+H4		{  }
+H5		{  }
+
+/* mathematics styles */
+DIV.displaymath		{ }	/* math displays */
+TD.eqno			{ }	/* equation-number cells */
+
+
+/* document-specific styles come next */
+BODY {
+	margin-top: 5%;
+	margin-right: 5%;
+	margin-bottom: 5%;
+	margin-left: 5%;
+}
+
+.MATH {
+ font-family : serif 
+}
+
+.MATH I {
+  font-family : serif;
+  font-style : italic
+}
+
+.BOLDMATH {
+  font-family : serif;
+  font-weight : bold
+}
+
+H1, H2, H3, h4, h5, h6 {
+  color : slategray;
+}
+
+DIV.displaymath {
+}
+
+DIV.navigation {
+ background : #ccc url(../img/logo.puc.gif) no-repeat;
+ font-weight : bold;
+ width : 17%;
+ position : fixed;
+ top : 0;
+ left : 0;
+ right : auto;
+ bottom : 0;
+ font-family : sans-serif;
+ margin: 0;
+ padding-top: 30%;
+ padding-left: 1%;
+ 
+ 
+}
+
+.navigation: before {
+ display : block;
+ color : Orange;
+ text-align : center;
+ border : outset 4px red;
+ width : auto;
+ left : auto;
+ right : auto;
+ font-size : x-large;
+ margin : 1ex;
+ background : #eee
+}
+
+DIV.navigation hr {
+  display : none
+}
+
+DIV.navigation img {
+ display : none;
+ width : 0;
+ padding : 0;
+ height : 0;
+ margin : 0
+}
+
+body div.navigation a {
+ display : block
+}
+
+P, DL, UL, OL, ADDRESS {
+ font-size : 12pt;
+ font-family : sans-serif;
+ text-align : justify
+}
+
+body {
+ position : absolute;
+ left : 20%
+}
+
+TD.eqno {
+}
+SPAN.arabic		{   }
