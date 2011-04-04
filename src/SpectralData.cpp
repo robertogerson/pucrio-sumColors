@@ -81,6 +81,7 @@ void SpectralData::readIlluminants(const char *filePath) {
         case 1:
             is >> wavelength >> data;
             illuminants[name]->insert(wavelength, data);
+
             length--;
             if(!length) {
                 // finish reading the current illuminant, must way for
@@ -198,24 +199,28 @@ void SpectralData::convertToCIEXYZ( int colorIndex,
 
         sum_x += this->I[colorIndex][i] * xbar * (this->step) *
                  this->illuminants[current_illuminant]->value(wavelength);
+
         sum_y += this->I[colorIndex][i] * ybar * (this->step) *
                  this->illuminants[current_illuminant]->value(wavelength);
+
         sum_z += this->I[colorIndex][i] * zbar * (this->step) *
                  this->illuminants[current_illuminant]->value(wavelength);
     }
 
-    sum_x /= N;
-    sum_y /= N;
-    sum_z /= N;
+    X = sum_x / N;
+    Y = sum_y / N;
+    Z = sum_z / N;
 
+    /*
     double x, y;
     x = sum_x/(sum_x+sum_y+sum_z);
     y = sum_y/(sum_x+sum_y+sum_z);
 
-    //    Y = (sum_y>10.0)?sum_y:10.0;      /* Luminance with a floor in 10% */
-     Y = sum_y;
-     X = (x/y)*(Y);
-     Z = ((1-x-y)/y)*(Y);
+    qDebug() << x << y;
+    //    Y = (sum_y>10.0)?sum_y:10.0;      // Luminance with a floor in 10%
+    Y = sum_y;
+    X = (x/y)*(Y);
+    Z = ((1-x-y)/y)*(Y);*/
 }
 
 void SpectralData::convertToCIExyY( int colorIndex,
