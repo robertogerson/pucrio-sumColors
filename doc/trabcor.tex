@@ -71,22 +71,40 @@ novo espectro as componentes CIEXYZ, CIExyY, CIELuv, CIELab e sRGB.
 \end{list}
 
 \section{Conceitos Básicos}
-\subsection{Percepção da Cor}
 \par
 Antes de discutirmos como se deu a implementação do trabalho, é importante
-definirmos alguns conceitos básicos e como se dá o processo de percepção de
-cor, os quais serão úteis para as discussões seguintes.
+definirmos alguns conceitos básicos e como se dá o processo de percepção e
+adição de cores, os quais serão úteis para as discussões seguintes.
 
+\subsection{Luz}
 \par
-Para os nossos propósitos, a luz é descrita por meio de uma curva de
-distribuição espectral. Um tipo específico de luz emite diferentes quantidades
-de energia em cada parte do espectro visível. A Figura
-\ref{fig:visible_spectrum} apresenta o exemplo do espectro de uma luz do dia.
+Da Física, sabemos que a luz tem um comportamento dual, as vezes se comportando
+como um feixe de partículas e outras como uma onda. Aqui estamos muito mais
+interessados em seu comportamento como onda, sendo que geralmente a
+caracterizamos por meio de seu comprimento de onda ou frequência. Cabe
+ressaltar, entretanto, que a luz vísivel é apenas uma pequena parte das
+chamadas onda eletromagnéticas (indo de aproximada 380nm até 780nm).
 
 \begin{figure}[!htb]
      \centering
-     \includegraphics[scale=0.8]{img/spectrum_light.png}
-     \caption{Exemplo de espectro da luz do dia. Fonte:
+     \includegraphics[scale=0.4]{img/visible_spectrum.jpg}
+     \caption{Faixa de espectro visível. Fonte:
+\htmladdnormallink{Gattas, Marcelo}{
+http://www.tecgraf.puc-rio.br/~mgattass/cg/pdf/02_CorPPT.pdf}}
+     \label{fig:visible_spectrum}
+\end{figure}
+
+\par
+Para os nossos propósitos, a luz é descrita por meio de uma curva de
+distribuição espectral sobre o espectro visível . Um tipo específico de luz
+emite diferentes quantidades de energia em cada parte do espectro visível. A
+Figura \ref{fig:visible_spectrum} apresenta o exemplo do espectro de uma luz do
+dia.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.6]{img/spectrum_light.png}
+     \caption{Espectro da Luz do dia. Fonte:
 \htmladdnormallink{DiCosola, Michael}{
 http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
      \label{fig:visible_spectrum}
@@ -99,56 +117,27 @@ onda, o chamamos de espectro puro. Consequentemente, as cores associadas à
 este tipo de espectro são chamadas de cores de espectro puro (ou 100\%
 saturadas).
 
-\subsubsection{Processo aditivo de formação de cor}
-
-\subsubsection{Tri-cromaticidade}
-
-\subsubsection{Observador padrão CIE}
+\subsection{Fontes de Luz e Iluminantes}
 \par
-Adicionalmente, a sensibilidade das células fotoceptoras (cones e
-bastonetes) em nossos olhos são diferentes para cada comprimento de onda, de
-tal forma que a energia em alguns comprimentos precisam ser maior para
-percebemos alguma diferença.
+A luz é produzida por uma fonte de luz. Adicionalmente, também é importante
+definirmos a diferença de uma \textit{fonte de luz} para um \textit{iluminante}.
+Uma fonte de luz é algo realmente físico, que existe e pode ser ligada ou
+desligada para iluminar algo. Por outro lado, um iluminante é uma luz que foi
+definida apenas pela sua distribuição espectral, mas não necessariamente existe.
+Assim, se, através de experimentos definirmos a distribuição espectral de uma
+fonte de luz sobre um branco, nós definimos um iluminante. Essa diferença é
+importante pois estamos muito mais interessados nos iluminantes, os quais
+existindo ou não, podemos estudar numericamente, como um determinado será
+visualizado quando iluminado por ele.
+
+\par
+Exitem vários iluminantes que são padronizados. As Figuras a seguir apresentam
+o espectro de dois desses iluminantes, D50 e D65, que serão utilizados na
+implementação deste trabalho.
 
 \begin{figure}[!htb]
      \centering
-     \includegraphics[scale=0.8]{img/cie_std_observer.png}
-     \caption{Observador Padrão CIE.}
-     \label{Label de referência para a imagem}
-\end{figure}
-
-\par
-Entretanto, nós, seres humanos, somos sensível ao espectro de luz que
-chega em nossos olhos. Não conseguimos assim distinguir a energia de cada
-comprimento de onda individualmente.
-
-Dessa forma, o estímulo de cada espectro de luz é
-associado à uma cor.
-
-\subsection{Iluminantes}
-\par
-Também é importante definirmos a diferença de uma \textit{fonte de luz} para um
-\textit{iluminante}. Uma fonte de luz é algo realmente físico, que existe e
-pode ser ligada ou desligada para iluminar algo. Por outro lado, um iluminante é
-uma luz que foi definida apenas pela sua distribuição espectral, mas não
-necessariamente existe. Assim, se, através de experimentos definirmos a
-distribuição espectral de uma fonte de luz sobre um branco, nós definimos um
-iluminante. Essa diferença é importante pois estamos muito mais interessados
-nos iluminantes, os quais existindo ou não, podemos estudar numericamente, como
-um determinado será visualizado quando iluminado por ele.
-
-\par
-A cor de um objeto nada mais é do que o espectro resultante de todas as
-interações da luz com ele e que ele emite. É fácil perceber que ao ser iluminado
-por fontes de luz diferentes um mesmo objeto pode ter cores diferentes. Isso
-porque a própria fonte de luz também tem uma cor. Isso fica claro quando a
-definimos como um iluminante, pois sua distribuição espectral define a "cor" do
-iluminante. As Figuras a seguir apresentam os espectros de dois iluminantes
-padrão: D50 e D65.
-
-\begin{figure}[!htb]
-     \centering
-     \includegraphics[scale=0.8]{img/illuminant_d50.png}
+     \includegraphics[scale=0.6]{img/illuminant_d50.png}
      \caption{Espectro do iluminante D50. Fonte:
 \htmladdnormallink{DiCosola, Michael}{
 http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
@@ -157,12 +146,21 @@ http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
 
 \begin{figure}[!htb]
      \centering
-     \includegraphics[scale=0.8]{img/illuminant_d65.png}
+     \includegraphics[scale=0.6]{img/illuminant_d65.png}
      \caption{Espectro do Iluminante D65. Fonte:
 \htmladdnormallink{DiCosola, Michael}{
 http://www.xrite.com/documents/apps/public/whitepapers/Ca00002a.pdf}}
      \label{fig:illuminant_d65}
 \end{figure}
+
+\subsection{O que é a cor?}
+\par
+A cor de um objeto nada mais é do que o espectro resultante de todas as
+interações da luz com ele e que ele emite. É fácil perceber que ao ser iluminado
+por fontes de luz diferentes um mesmo objeto pode ter cores diferentes. Isso
+porque a própria fonte de luz também tem uma cor. Isso fica claro quando a
+definimos como um iluminante, pois sua distribuição espectral define a "cor" do
+iluminante.
 
 \par
 A superfície de um objeto pode refletir de forma diferente diferentes
@@ -171,7 +169,81 @@ reflectância de um objeto por meio de um gráfico onde, para cada comprimento d
 onda, temos a porcentagem de energia que essa superfície reflete. De posse
 desses dois dados podemos então calcular qual o espectro resultante, e
 consequentemente a cor, que esse objeto terá quando iluminado com um
-determinado iluminante.
+determinado iluminante. A Figura a seguir mostra esquematicamente este processo.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.9]{img/what_is_color.png}
+     \caption{Processo de formação de cor como resultado da interação de um
+espectro de um iluminante e o espectro de reflexão de um objeto. Fonte:
+\htmladdnormallink{Gattas, Marcelo}{
+http://www.tecgraf.puc-rio.br/~mgattass/cg/pdf/02_CorPPT.pdf}.}
+     \label{fig:what_is_color}
+\end{figure}
+
+\subsection{Processo aditivo de formação de cor}
+\par
+Diferente da percepção que temos do som por exemplo, ao adicionarmos duas cores,
+o olho humano não consegue diferenciar componentes e sim uma nova cor
+resultante. Neste trabalho, em especial, estamos interessado em analisar o que
+acontece quando somamos duas cores nos diferentes espaços de cores que existem,
+e que serão detalhados mais a frente.
+
+\par
+Antes de analisarmos o que acontece com os diferentes espaços de cor,
+entretanto, já temos capacidade de discutir o que acontece quando, por exemplo,
+quando iluminamos uma mesma região com duas fontes de luz diferente. Como
+resultado, teremos um espectro resultante que é a soma dos dois espectros
+individuais, conforme mostra a figura abaixo. Essa é uma das formas de criarmos
+novas cores a partir de outras.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.6]{img/color_addition.png}
+     \caption{Adição de espectro de cores gerada a partir do aplicativo
+desenvolvido por este trabalho.}
+     \label{fig:color_addition}
+\end{figure}
+
+\subsection{Observador CIE padrão}
+\par
+Contudo, nem tudo é tão simples como parece. A percepção de cor é um fenômeno
+muito mais contextual do que pode parecer a primeira vista. Por exemplo, uma
+mesma cor com diferentes planos de fundo tendem a parecer diferente para nós.
+Além disso, a cor também é dependente do tamanho dos objetos que estamos
+visualizando. Tudo isso torna o processo de representação e reprodução de cor
+muito mais complexo do que pode parecer.
+
+\par
+Mesmo assim, existe muita evidência de que uma teoria baseada em três estímulos
+de cor é bastante útil para muitas aplicações práticas. De acordo com a teoria
+da tri-cromaticidade, um observador pode perceber uma cor como uma mistura
+aditiva de três estímulos primários.
+
+\par
+Baseado nesta teoria e em testes empíricos, onde são requisitados para
+observadores enunciarem quais as cores que estão vendo a partir de uma mistura
+de três cores primarias, o \htmladdnormallink{International
+Commission on Illumination (CIE)}{http://cie.co.at} definiu, em 1931,
+a curva da Figura abaixo. Essa curva apresenta resultados empíricos para
+observadores com um campo de visão de 2 graus. Em 1964, uma nova curva, um
+pouco diferente dessa, foi desenvolvida com observadores contendo 10 graus.
+
+\begin{figure}[!htb]
+     \centering
+     \includegraphics[scale=0.8]{img/cie_std_observer.png}
+     \caption{Observador Padrão CIE.}
+     \label{fig:standard_observer}
+\end{figure}
+
+\par
+Esse gráfico mostra a quantidade relativa das três cores primárias
+(aproximadamente vermelho, azul e verde) que deve ser fornecida para que um
+observador regular possa distiguir uma unidade de luz comprimento de onda. Como
+é possível observar pelo gráfico, a sensibilidade das células fotoceptoras
+(os cones e bastonetes) em nossos olhos são diferentes para cada comprimento de
+onda, de tal forma que a energia em alguns comprimentos de onda precisam ser
+maior para percebemos alguma diferença.
 
 \section{Implementação}
 Para apoiar a análise da linearidade dos espaços de cor, que serão detalhados
