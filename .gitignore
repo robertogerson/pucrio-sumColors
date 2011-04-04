@@ -9,3 +9,4 @@ doc/trabcor/*
 !doc/trabcor/*.css
 *.tex.backup
 doc/trabcor.pdf
+trabCor
