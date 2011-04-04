@@ -73,16 +73,15 @@ DIV.navigation {
  
 }
 
-.navigation: before {
+.navigation:before {
+ white-space: pre;
+ content : "Roberto Gerson de\A Albuquerque Azevedo\A \A Fundamentos de\A Computação Gráfica\AINF2608";
  display : block;
- color : Orange;
- text-align : center;
- border : outset 4px red;
+ text-align : right;
+# border : outset 1px blue;
  width : auto;
  left : auto;
  right : auto;
- font-size : x-large;
- margin : 1ex;
  background : #eee
 }
 
