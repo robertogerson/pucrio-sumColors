@@ -14,13 +14,16 @@ SpectralData::SpectralData() {
 
 }
 
-// TODO: This is a great opportunity to bugs!
 SpectralData::~SpectralData() {
     clearAllSpectralData();
 }
 
 void SpectralData::setCurrentIlluminant(string illuminant){
     this->current_illuminant = illuminant;
+}
+
+string SpectralData::getCurrentIlluminant(){
+    return this->current_illuminant;
 }
 
 void SpectralData::readStandardObserverFromFile(const char *filePath) {
@@ -262,7 +265,7 @@ void SpectralData::convertTosRGB( int colorIndex,
 
     /* r = 3.2406*X - 1.5372*Y - 0.4986*Z;
     g = -0.9689*X + 1.8758*Y - 0.0415*Z;
-    b = 0.0557*X - 0.2040*Y + 1.0570*Z;*/
+    b = 0.0557*X - 0.2040*Y + 1.0570*Z; */
 
     //correcao gama
     r = (r<0.00304) ? 12.92*r : 1.055*pow(r, gamma)-0.055;
@@ -374,7 +377,10 @@ void SpectralData::convertToCIELuv(int colorIndex,
     v = 13 * L * ( var_V - ref_V );
 }
 
-void SpectralData::tristimulusFromCurrentIlluminant(double &Xw, double &Yw, double &Zw){
+void SpectralData::tristimulusFromCurrentIlluminant( double &Xw,
+                                                     double &Yw,
+                                                     double &Zw){
+    //TODO:
     if(current_illuminant == "D50") {
         Xw = 95.047;
         Yw = 100.00;

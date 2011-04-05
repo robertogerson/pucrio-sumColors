@@ -17,19 +17,21 @@
 #include "SpectralData.h"
 #include "ColorInformationDock.h"
 #include "ColorChooseDock.h"
+#include "ViewConfiguration.h"
 #include "qt.h"
 
 class PlotWindow : public QMainWindow
 {
     Q_OBJECT
 private:
-    bool stdObserverSpectrumActived, normalizeResultSpectrum;
-    int colorIndex1, colorIndex2;
+    bool normalizeResultSpectrum;
 
+    int colorIndex1, colorIndex2;
     SpectralData *spectralIn;
     SpectralData resultSpectrum;
 
     ColorChooseDock *colorChooseDock;
+    ViewConfiguration *viewConfiguration;
 
     void createDocks();
     QDockWidget *leftDock;
@@ -37,16 +39,36 @@ private:
 
     void createMenus();
     QMenu *fileMenu;
-    QMenu *viewMenu;
     QMenu *editMenu;
     QMenu *helpMenu;
 
     /* Private function related to plot */
     void plotSpectralData(int color1, int color2);
     void plotStdObserverFunction();
+    void plotIlluminantSpectrum();
+    void plotXY(); void plotxy(); void plotab(); void plotuv(); void plotRG();
     void drawLegends();
-    void plotColoursSystems();
     void updateResultColor();
+
+    /* Visualization control */
+    //showing spectrum User Control
+    bool showStdObserverSpectrum, showColorSpectrum, showIlluminantSpectrum;
+
+    //showing diagram User Control
+    bool showXY, showxy, showab, showuv, showRG;
+
+    /// set to default configuration, i.e., just spectrum of colors.
+    void defaultViewConfiguration();
+
+public slots:
+    void setStdObserverVisibility(int v){ showStdObserverSpectrum=v; updatePlot(); }
+    void setColorSpectrumVisibility(int v) { showColorSpectrum = v; updatePlot(); }
+    void setIlluminantSpectrumVisibility(int v) { showIlluminantSpectrum = v; updatePlot(); }
+    void setXYVisibility(int v) { showXY = v; updatePlot(); }
+    void setxyVisibility(int v) { showxy = v; updatePlot(); }
+    void setabVisibility(int v) { showab = v; updatePlot(); }
+    void setuvVisibility(int v) { showuv = v; updatePlot(); }
+    void setRGVisibility(int v) { showRG = v; updatePlot(); }
 
 public:
     /// Constructor for the window, holding the widget parameters
@@ -79,7 +101,6 @@ public slots:
 protected:
     PLINT       strm;
     QtExtWidget *plotColorSpectrum;
-    QtExtWidget *plotStdObserverFunctionWidget;
 
 };
 

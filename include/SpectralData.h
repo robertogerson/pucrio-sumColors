@@ -27,6 +27,7 @@ public:
     QMap < string, QMap <int, double> * > illuminants;
     string current_illuminant;
     void setCurrentIlluminant(string illuminant);
+    string getCurrentIlluminant();
     void tristimulusFromCurrentIlluminant(double &Xw, double &Yw, double &Zw);
 
     SpectralData();

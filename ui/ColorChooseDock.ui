@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>439</height>
+    <width>293</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>Colours</string>
+       <string>Colors</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <item row="1" column="1">
