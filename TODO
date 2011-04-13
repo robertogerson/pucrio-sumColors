@@ -1,3 +1,9 @@
 TODO: 
 
-* Change Illuminant.
+* User interface
+  - Menu File -> Load Spectrum Data
+  - Menu File -> Load Illuminants
+  - Menu File -> Load Observer
+  - Menu Help -> Contents
+  - Menu Help -> About (and AboutQt)
+
