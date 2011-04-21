@@ -89,23 +89,23 @@ void PlotWindow::createDocks() {
 
 void PlotWindow::createMenus() {
     /* File Menu */
-    fileMenu = menuBar()->addMenu("File");
-    fileMenu->addAction("Load Colours Spectrum...", this, SLOT(quit()));
-    fileMenu->addAction("Load Illuminants Spectrum...", this, SLOT(quit()) );
-    fileMenu->addAction("Load Observer Spectrum...", this, SLOT(quit()));
+    fileMenu = menuBar()->addMenu("&File");
+    fileMenu->addAction("Load &Colours Spectrum...", this, SLOT(quit()));
+    fileMenu->addAction("Load &Illuminants Spectrum...", this, SLOT(quit()) );
+    fileMenu->addAction("Load &Observer Spectrum...", this, SLOT(quit()));
     fileMenu->addSeparator();
-    fileMenu->addAction("Quit", this, SLOT(quit()) );
+    fileMenu->addAction("&Quit", this, SLOT(quit()) );
 
     QAction *checkableAction;
-    editMenu = menuBar()->addMenu("Preferences");
+    editMenu = menuBar()->addMenu("&Preferences");
     checkableAction =
-            editMenu->addAction( "Normalize Color Sum Spectrum",
+            editMenu->addAction( "&Normalize Color Sum Spectrum",
                                  this, SLOT(switchNormalizeResultSpectrum()));
     checkableAction->setCheckable(true);
 
-    helpMenu = menuBar()->addMenu("Help");
-    helpMenu->addAction("Contents", this, SLOT(helpContents()));
-    helpMenu->addAction("About", this, SLOT(helpAbout()));
+    helpMenu = menuBar()->addMenu("&Help");
+    helpMenu->addAction("&Contents", this, SLOT(helpContents()));
+    helpMenu->addAction("&About", &aboutWidget, SLOT(exec()));
 
 }
 
@@ -706,15 +706,17 @@ void PlotWindow::plotRG(){
 
 }
 
+void PlotWindow::helpContents(){
+    view.load(QUrl("doc/trabcor/index.html"));
+    view.show();
+
+}
+
 void PlotWindow::defaultViewConfiguration(){
     showColorSpectrum = true;
 
     showStdObserverSpectrum = showIlluminantSpectrum = false;
     showXY = showxy = showab = showuv = showRG = false;
-}
-
-void PlotWindow::helpAbout(){
-    QApplication::aboutQt();
 }
 
 void PlotWindow::quit() {

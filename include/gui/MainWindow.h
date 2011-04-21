@@ -14,6 +14,8 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QDockWidget>
 #include <QtGui/QGroupBox>
+#include <QtWebKit/QWebView>
+#include <About.h>
 #include "SpectralData.h"
 #include "ColorInformationDock.h"
 #include "ColorChooseDock.h"
@@ -24,6 +26,8 @@ class PlotWindow : public QMainWindow
 {
     Q_OBJECT
 private:
+    QWebView view;
+    About aboutWidget;
     bool normalizeResultSpectrum;
 
     int colorIndex1, colorIndex2;
@@ -95,7 +99,7 @@ public slots:
     void updatePlot();
     void switchStdObsFuncVisibility();
     void quit();
-    void helpAbout();
+    void helpContents();
     void switchNormalizeResultSpectrum();
 
 protected:
