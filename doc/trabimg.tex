@@ -1,0 +1,47 @@
+%% Author: Roberto Gerson de Albuquerque Azevedo
+%% Chapter Processamento de Imagens
+
+\chapter{Processamento de Imagem}
+
+\section{Operações Geométricas}
+\par
+O propósito das operações geométricas é deformar uma imagem alterando sua
+geometria, diferente dos filtros, onde a posição dos pixels não se altera,
+apenas sua intensidade. Exemplos comuns de operações geométricas são: rotação,
+escala e translação. Em especial, as operações geométricas são de suma
+importância na computação gráfica, onde comumente texturas devem ser deformadas
+para mapear em uma superfície 3D.
+
+\par
+Diferente do que inicialmente possa parecer as operações geométricas não são
+simples de serem realizadas. Em um exemplo bem trivial como em escalar a imagem
+já é possível perceber que se quisermos escalá-la de um fator $n$, não teremos
+um resultado razoável se replicarmos cada pixal $n$ x $n$ vezes.
+
+\begin{center}
+\begin{tabular}{ l c r }
+  Classe & quadrado & círculo \\
+  Geral & Arbitário & Arbitrário \\
+  Projetiva & Quadrilátero & Curva cônica \\
+  Afim & Paralelograma & Elipse \\
+\end{tabular}
+\end{center}
+
+\subsection{Perspective}
+
+\subsection{Twirl}
+
+\subsection{Sphere}
+
+\section{Interpolação}
+\subsection{Linear}
+\subsection{Bilinear}
+
+\section{Adicional: Mapeamento de Texturas}
+\subsection{Filtro EWA}
+\par
+foreach pixels in screen
+{
+  calculate jacobian matrix (a local affine transform to the)
+}
+
